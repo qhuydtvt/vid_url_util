@@ -7,6 +7,7 @@ This file creates your application.
 """
 
 import os
+import youtube_dl
 from flask import Flask, render_template, request, redirect, url_for
 import pafy
 import json
@@ -36,17 +37,16 @@ def test():
     """Render the website's about page."""
     return "test"
 
-@app.route('/youtube/<id>')
-def get_youtube_link(id):
-    url = "https://www.youtube.com/watch?v=" + id
-    video = pafy.new(url)
-    for vid_stream in video.streams:
-        print(vid_stream.resolution, vid_stream.url)
-    return "[" + ",".join([(json.dumps({
-                 "resolution" : vid_stream.resolution,
-                 "url" : vid_stream.url
-              }))
-             for vid_stream in video.streams]) + "]";
+@app.route('/api/<path:url>')
+def get_youtube_link(url):
+    
+    ydl_opts = {}
+
+    ydl = youtube_dl.YoutubeDL(ydl_opts)
+
+    vid_info = ydl.extract_info(url=url, download=False)
+
+    return json.dumps(vid_info)
 ###
 # The functions below should be applicable to all Flask apps.
 ###
