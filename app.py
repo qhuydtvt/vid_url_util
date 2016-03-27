@@ -9,6 +9,7 @@ This file creates your application.
 import os
 from flask import Flask, render_template, request, redirect, url_for
 import pafy
+import json
 
 app = Flask(__name__)
 
@@ -41,10 +42,10 @@ def get_youtube_link(id):
     video = pafy.new(url)
     for vid_stream in video.streams:
         print(vid_stream.resolution, vid_stream.url)
-    return "[" + ",".join([str({
+    return "[" + ",".join([(json.dumps({
                  "resolution" : vid_stream.resolution,
                  "url" : vid_stream.url
-              })
+              }))
              for vid_stream in video.streams]) + "]";
 ###
 # The functions below should be applicable to all Flask apps.
