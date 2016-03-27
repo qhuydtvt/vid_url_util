@@ -8,6 +8,7 @@ This file creates your application.
 
 import os
 from flask import Flask, render_template, request, redirect, url_for
+import pafy
 
 app = Flask(__name__)
 
@@ -34,6 +35,17 @@ def test():
     """Render the website's about page."""
     return "test"
 
+@app.route('/youtube/<id>')
+def get_youtube_link(id):
+    url = "https://www.youtube.com/watch?v=" + id
+    video = pafy.new(url)
+    for vid_stream in video.streams:
+        print(vid_stream.resolution, vid_stream.url)
+    return "[" + ",".join([str({
+                 "resolution" : vid_stream.resolution,
+                 "url" : vid_stream.url
+              })
+             for vid_stream in video.streams]) + "]";
 ###
 # The functions below should be applicable to all Flask apps.
 ###
